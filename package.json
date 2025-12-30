@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "homepage": "https://aryansingh.github.io/yoga_checkout_new",
+  "homepage": "https://checkout.purnamyogashala.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
