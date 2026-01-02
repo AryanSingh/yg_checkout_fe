@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { TextField, Button, Box, Alert, Typography } from '@mui/material'
 
+
 export default function CheckoutForm() {
     const [form, setForm] = useState({
         name: '',
@@ -34,8 +35,10 @@ export default function CheckoutForm() {
         setError(null)
         try {
             const resp = await fetch(
-                'https://api.purnamyogashala.com/initiatePayment'
+                `${import.meta.env.VITE_API_BASE_URL}/initiatePayment`
+                // 'https://api.purnamyogashala.com/initiatePayment'
                 // 'http://localhost:5000/initiatePayment'
+
                 , {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
