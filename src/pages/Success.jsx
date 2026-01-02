@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Button } from '@mui/material'
 import { useLocation } from 'react-router-dom'
+import jsPDF from 'jspdf'
 
 function useQuery() {
     return new URLSearchParams(useLocation().search)
@@ -36,6 +37,19 @@ export default function Success() {
             })
     }, [orderId])
 
+    const handleDownload = () => {
+        if (!orderData) return
+        const doc = new jsPDF()
+        doc.setFontSize(18)
+        doc.text('Payment Receipt', 20, 20)
+        doc.setFontSize(12)
+        doc.text(`Order Number: ${orderData.order_id}`, 20, 40)
+        doc.text(`Amount Paid: ₹${orderData.amount}`, 20, 50)
+        doc.text(`Status: ${orderData.status}`, 20, 60)
+        doc.text('Thank you for your payment!', 20, 80)
+        doc.save(`order_${orderData.order_id}.pdf`)
+    }
+
     return (
         <Box
             sx={{
@@ -67,9 +81,16 @@ export default function Success() {
                     <Typography variant="body1" color="success.main" sx={{ mt: 2 }}>
                         Thank you for your payment!
                     </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ mt: 3 }}
+                        onClick={handleDownload}
+                    >
+                        Download PDF
+                    </Button>
                 </>
             )}
-
         </Box>
     )
 }
