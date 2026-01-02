@@ -44,7 +44,7 @@ export default function Success() {
         doc.text('Payment Receipt', 20, 20)
         doc.setFontSize(12)
         doc.text(`Order Number: ${orderData.order_id}`, 20, 40)
-        doc.text(`Amount Paid: ₹${orderData.amount}`, 20, 50)
+        doc.text(`Amount Paid: ${orderData.amount}`, 20, 50)
         doc.text(`Status: ${orderData.status}`, 20, 60)
         doc.text('Thank you for your payment!', 20, 80)
         doc.save(`order_${orderData.order_id}.pdf`)
