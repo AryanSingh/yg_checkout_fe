@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { TextField, Button, Box, Alert, Typography } from '@mui/material'
+import { useLocation } from 'react-router-dom'
+
 
 
 export default function CheckoutForm() {
+    const location = useLocation()
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -12,6 +15,16 @@ export default function CheckoutForm() {
     })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    useEffect(() => {
+        const params = new URLSearchParams(location.search)
+        setForm({
+            name: params.get('name') || '',
+            email: params.get('email') || '',
+            phone: params.get('phone') || '',
+            address: params.get('address') || '',
+            amount: params.get('amount') ? Number(params.get('amount')) : 499
+        })
+    }, [location.search]);
 
     function onChange(e) {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -116,11 +129,12 @@ export default function CheckoutForm() {
                 fullWidth
             />
             <TextField
-                label="Amount (INR)"
+                label="Amount (EURO)"
                 name="amount"
                 type="number"
                 value={form.amount}
                 onChange={onChange}
+                disabled
                 required
                 fullWidth
                 InputProps={{ inputProps: { min: 1 } }}

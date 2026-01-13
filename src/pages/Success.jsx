@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Typography, Button } from '@mui/material'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import jsPDF from 'jspdf'
 
 function useQuery() {
@@ -10,10 +10,10 @@ function useQuery() {
 export default function Success() {
     const query = useQuery()
     const orderId = query.get('order_id')
-    const [status, setStatus] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [orderData, setOrderData] = useState(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!orderId) {
@@ -27,15 +27,19 @@ export default function Success() {
                 return res.json()
             })
             .then(data => {
-                setStatus(data.status)
-                setOrderData(data)
-                setLoading(false)
+                if (data.status !== 'CHARGED') {
+                    // Redirect to Failure page with order info
+                    navigate('/failure', { state: { orderId: data.order_id, amount: data.amount, status: data.status } })
+                } else {
+                    setOrderData(data)
+                    setLoading(false)
+                }
             })
             .catch(err => {
                 setError(err.message)
                 setLoading(false)
             })
-    }, [orderId])
+    }, [orderId, navigate])
 
     const handleDownload = () => {
         if (!orderData) return
@@ -44,7 +48,7 @@ export default function Success() {
         doc.text('Payment Receipt', 20, 20)
         doc.setFontSize(12)
         doc.text(`Order Number: ${orderData.order_id}`, 20, 40)
-        doc.text(`Amount Paid: ${orderData.amount}`, 20, 50)
+        doc.text(`Amount Paid: ₹${orderData.amount}`, 20, 50)
         doc.text(`Status: ${orderData.status}`, 20, 60)
         doc.text('Thank you for your payment!', 20, 80)
         doc.save(`order_${orderData.order_id}.pdf`)
