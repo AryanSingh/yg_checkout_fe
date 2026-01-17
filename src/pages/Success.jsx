@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography, Button } from '@mui/material'
+import { Box, Typography, Button, CircularProgress } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import jsPDF from 'jspdf'
 
@@ -18,7 +18,7 @@ export default function Success() {
     useEffect(() => {
         if (!orderId) {
             setError('No order ID found')
-            setLoading(false)
+            // setLoading(false)
             return
         }
         fetch(`${import.meta.env.VITE_API_BASE_URL}/orders/${orderId}`)
@@ -29,16 +29,16 @@ export default function Success() {
             .then(data => {
                 if (data.status !== 'CHARGED') {
                     // Redirect to Failure page with order info
-                    navigate('/failure', { state: { orderId: data.order_id, amount: data.amount, status: data.status } })
+                    navigate('/payment-failed', { state: { orderId: data.order_id, amount: data.amount, status: data.status } })
                 } else {
                     setOrderData(data)
-                    setLoading(false)
+                    // setLoading(false)
                 }
             })
             .catch(err => {
                 setError(err.message)
-                setLoading(false)
-            })
+                // setLoading(false)
+            }).finally(() => setLoading(false))
     }, [orderId, navigate])
 
     const handleDownload = () => {
@@ -68,10 +68,12 @@ export default function Success() {
             }}
         >
             <Typography variant="h4" color="success.main" gutterBottom>
-                Payment Successful!
+                {loading? "": "Payment Successful!"}
             </Typography>
             {loading ? (
-                <Typography>Loading order details...</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                    <CircularProgress />
+                </Box>
             ) : error ? (
                 <Typography color="error.main">{error}</Typography>
             ) : (

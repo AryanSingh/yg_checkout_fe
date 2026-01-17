@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { TextField, Button, Box, Alert, Typography } from '@mui/material'
 import { useLocation } from 'react-router-dom'
 
@@ -6,23 +6,56 @@ import { useLocation } from 'react-router-dom'
 
 export default function CheckoutForm() {
     const location = useLocation()
+
+    // Security Fix: Define products locally to map IDs to prices for display. 
+    // Actual price validation happens on backend.
+    const PRODUCTS = {
+        "100_WITH_ACCOM": {
+            name: "100 Hour Yoga API with Accommodation",
+            price: 900,
+            currency: "INR"
+        },
+        "100_WITHOUT_ACCOM": {
+            name: "100 Hour Yoga API without Accommodation",
+            price: 600,
+            currency: "INR"
+        },
+        "200_WITH_ACCOM": {
+            name: "200 Hour Yoga API with Accommodation",
+            price: 1800,
+            currency: "INR"
+        },
+        "200_WITHOUT_ACCOM": {
+            name: "200 Hour Yoga API without Accommodation",
+            price: 900,
+            currency: "INR"
+        }
+    };
+
     const [form, setForm] = useState({
         name: '',
         email: '',
         phone: '',
         address: '',
-        amount: 499
+        product_id: '100_WITH_ACCOM', // Default
+        amount: 900
     })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+
     useEffect(() => {
         const params = new URLSearchParams(location.search)
+        const productIdFromUrl = params.get('product_id');
+        // Validating if the product exists, else fallback to default
+        const validProductId = PRODUCTS[productIdFromUrl] ? productIdFromUrl : '100_WITH_ACCOM';
+
         setForm({
             name: params.get('name') || '',
             email: params.get('email') || '',
             phone: params.get('phone') || '',
             address: params.get('address') || '',
-            amount: params.get('amount') ? Number(params.get('amount')) : 499
+            product_id: validProductId,
+            amount: PRODUCTS[validProductId].price
         })
     }, [location.search]);
 
@@ -40,7 +73,7 @@ export default function CheckoutForm() {
         isValidEmail(form.email) &&
         form.phone.trim() &&
         form.address.trim() &&
-        form.amount && Number(form.amount) > 0
+        form.product_id
 
     async function onSubmit(e) {
         e.preventDefault()
@@ -53,10 +86,17 @@ export default function CheckoutForm() {
                 // 'http://localhost:5000/initiatePayment'
 
                 , {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
-            })
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: form.name,
+                        email: form.email,
+                        phone: form.phone,
+                        address: form.address,
+                        product_id: form.product_id
+                        // Security Fix: Do NOT send amount. Backend determines amount from product_id.
+                    })
+                })
             if (!resp.ok) throw new Error('Failed to create payment')
             const data = await resp.json()
             if (data.paymentUrl) {
@@ -129,15 +169,20 @@ export default function CheckoutForm() {
                 fullWidth
             />
             <TextField
-                label="Amount (EURO)"
+                label="Product ID"
+                name="product_id"
+                value={form.product_id}
+                disabled
+                fullWidth
+                helperText="Code for the selected course"
+            />
+            <TextField
+                label="Amount (INR)"
                 name="amount"
                 type="number"
                 value={form.amount}
-                onChange={onChange}
                 disabled
-                required
                 fullWidth
-                InputProps={{ inputProps: { min: 1 } }}
             />
             <Button
                 type="submit"
@@ -147,7 +192,7 @@ export default function CheckoutForm() {
                 fullWidth
                 sx={{ mt: 2 }}
             >
-                {loading ? 'Processing...' : 'Proceed to Pay'}
+                {loading ? 'Processing...' : `Pay INR ${form.amount}`}
             </Button>
             {error && (
                 <Alert severity="error" sx={{ mt: 2 }}>
