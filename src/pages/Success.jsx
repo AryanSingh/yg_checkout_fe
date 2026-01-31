@@ -68,7 +68,7 @@ export default function Success() {
             }}
         >
             <Typography variant="h4" color="success.main" gutterBottom>
-                {loading? "": "Payment Successful!"}
+                {loading ? "" : "Payment Successful!"}
             </Typography>
             {loading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -82,7 +82,7 @@ export default function Success() {
                         Order Number: {orderId}
                     </Typography>
                     <Typography variant="body1">
-                        Amount Paid: ₹{orderData?.amount}
+                        Amount Paid: EUR {orderData?.amount}
                     </Typography>
                     <Typography variant="body1" color="success.main" sx={{ mt: 2 }}>
                         Thank you for your payment!
