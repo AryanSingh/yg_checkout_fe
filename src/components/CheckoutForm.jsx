@@ -178,7 +178,7 @@ export default function CheckoutForm() {
                 helperText="Code for the selected course"
             />
             <TextField
-                label="Amount (INR)"
+                label="Amount (EUR)"
                 name="amount"
                 type="number"
                 value={form.amount}
