@@ -13,22 +13,22 @@ export default function CheckoutForm() {
         "100_WITH_ACCOM": {
             name: "100 Hour Yoga API with Accommodation",
             price: 900,
-            currency: "INR"
+            currency: "EUR"
         },
         "100_WITHOUT_ACCOM": {
             name: "100 Hour Yoga API without Accommodation",
             price: 600,
-            currency: "INR"
+            currency: "EUR"
         },
         "200_WITH_ACCOM": {
             name: "200 Hour Yoga API with Accommodation",
             price: 1800,
-            currency: "INR"
+            currency: "EUR"
         },
         "200_WITHOUT_ACCOM": {
             name: "200 Hour Yoga API without Accommodation",
             price: 900,
-            currency: "INR"
+            currency: "EUR"
         }
     };
 
@@ -45,7 +45,7 @@ export default function CheckoutForm() {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search)
-        const productIdFromUrl = params.get('product_id');
+        const productIdFromUrl = params.get('product_id') || params.get('product') || params.get('product_url');
         // Validating if the product exists, else fallback to default
         const validProductId = PRODUCTS[productIdFromUrl] ? productIdFromUrl : '100_WITH_ACCOM';
 
@@ -93,7 +93,8 @@ export default function CheckoutForm() {
                         email: form.email,
                         phone: form.phone,
                         address: form.address,
-                        product_id: form.product_id
+                        product_id: form.product_id,
+                        product_url: form.product_id // Send product_url as requested
                         // Security Fix: Do NOT send amount. Backend determines amount from product_id.
                     })
                 })
