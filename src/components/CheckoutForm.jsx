@@ -32,7 +32,7 @@ export default function CheckoutForm() {
         },
         "CUSTOM_AMOUNT": { // keeping a fallback for testing if needed, or we can remove it. Ideally strict.
             name: "Custom Payment",
-            price: 5, // Dynamic
+            price: 101, // Dynamic
             currency: "EUR"
         }
     };
