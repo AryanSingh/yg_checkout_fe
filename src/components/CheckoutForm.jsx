@@ -29,6 +29,11 @@ export default function CheckoutForm() {
             name: "200 Hour Yoga API without Accommodation",
             price: 900,
             currency: "EUR"
+        },
+        "CUSTOM_AMOUNT": { // keeping a fallback for testing if needed, or we can remove it. Ideally strict.
+            name: "Custom Payment",
+            price: 5, // Dynamic
+            currency: "EUR"
         }
     };
 
